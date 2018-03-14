@@ -1,6 +1,7 @@
 package com.haksunkim.simplehttpserver;
 
 import com.haksunkim.simplehttpserver.controller.MainController;
+import com.haksunkim.simplehttpserver.exception.MethodNotAllowedException;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -9,8 +10,12 @@ import java.net.Socket;
 public class SimpleHttpServer {
 
     public static void main(String[] args) throws Exception {
+        int port = 8080;
 
-        final ServerSocket server = new ServerSocket(8080);
+        // gets port number from arguments if defined
+        if (args.length > 0) port = Integer.valueOf(args[0]);
+
+        final ServerSocket server = new ServerSocket(port);
         System.out.println("Listening for connection on port 8080 ....");
 
         // Controller
@@ -42,11 +47,14 @@ public class SimpleHttpServer {
                 requestReader.close();
                 isr.close();
 
-                String httpResponse = "";
+                String httpResponse;
 
                 // check if request method is GET, and run get method from controller to get response body
                 if (requestMethod.toLowerCase().equals("get")) {
                     httpResponse = controller.get(requestPath);
+                } else {
+                    //only allows GET method
+                    httpResponse = controller.getError(new MethodNotAllowedException());
                 }
 
                 PrintWriter os;
