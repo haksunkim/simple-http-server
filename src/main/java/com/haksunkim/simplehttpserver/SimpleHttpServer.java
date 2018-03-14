@@ -16,7 +16,7 @@ public class SimpleHttpServer {
         if (args.length > 0) port = Integer.valueOf(args[0]);
 
         final ServerSocket server = new ServerSocket(port);
-        System.out.println("Listening for connection on port 8080 ....");
+        System.out.println("Listening for connection on port " + String.valueOf(port));
 
         // Controller
         MainController controller = new MainController();
