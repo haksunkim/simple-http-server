@@ -24,41 +24,43 @@ public class SimpleHttpServer {
 
             String requestLine = requestReader.readLine();
 
-            // first request line has method, path and http version info
-            // extract method and path information
-            String[] requestElements = requestLine.split(" ");
-            String requestMethod = requestElements[0];
-            String requestPath = requestElements[1];
+            try {
+                // first request line has method, path and http version info
+                // extract method and path information
+                String[] requestElements = requestLine.split(" ");
+                String requestMethod = requestElements[0];
+                String requestPath = requestElements[1];
 
-            // read request lines and compose request String
-            StringBuilder stringBuilder = new StringBuilder();
-            while (!requestLine.isEmpty()) {
-                stringBuilder.append(requestLine);
-                stringBuilder.append("\r\n");
-                requestLine = requestReader.readLine();
-            }
-            System.out.println(stringBuilder.toString());
+                // read request lines and compose request String
+                StringBuilder stringBuilder = new StringBuilder();
+                while (!requestLine.isEmpty()) {
+                    stringBuilder.append(requestLine);
+                    stringBuilder.append("\r\n");
+                    requestLine = requestReader.readLine();
+                }
+                System.out.println(stringBuilder.toString());
 
-            requestReader.close();
-            isr.close();
+                requestReader.close();
+                isr.close();
 
-            String responseBody = "";
+                String httpResponse = "";
 
-            // check if request method is GET, and run get method from controller to get response body
-            if (requestMethod.toLowerCase().equals("get")) {
-                responseBody = controller.get(requestPath);
-            }
+                // check if request method is GET, and run get method from controller to get response body
+                if (requestMethod.toLowerCase().equals("get")) {
+                    httpResponse = controller.get(requestPath);
+                }
 
-            PrintWriter os;
-            try(Socket socket = server.accept()) {
-                Date today = new Date();
-                String httpResponse = "HTTP/1.1 200 OK\r\n\r\n" + responseBody;
-                os = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                os.write(httpResponse);
-                os.flush();
-                os.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                PrintWriter os;
+                try(Socket socket = server.accept()) {
+                    os = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                    os.write(httpResponse);
+                    os.flush();
+                    os.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } catch (NullPointerException npe) {
+                // do nothing
             }
         }
     }
