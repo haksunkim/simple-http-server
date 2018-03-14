@@ -31,8 +31,8 @@ public class FileTemplate implements Template {
         }
 
         return HTML_TEMPLATE
-                .replace("{{title}}", "Directory Listing")
-                .replace("{{body-title}}", "Directory Listing")
+                .replace("{{title}}", "File Contents")
+                .replace("{{body-title}}", "File Contents")
                 .replace("{{body-content}}", bodyContent);
     }
 }

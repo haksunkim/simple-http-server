@@ -5,7 +5,6 @@ import com.haksunkim.simplehttpserver.controller.MainController;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 
 public class SimpleHttpServer {
 
@@ -57,10 +56,11 @@ public class SimpleHttpServer {
                     os.flush();
                     os.close();
                 } catch (Exception ex) {
+                    // cannot write to response, dump stack trace to console
                     ex.printStackTrace();
                 }
             } catch (NullPointerException npe) {
-                // do nothing
+                // request being empty or cannot be parsed, do nothing
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.haksunkim.simplehttpserver.controller;
 
 import com.haksunkim.simplehttpserver.service.FileService;
+import com.haksunkim.simplehttpserver.template.Template;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
@@ -14,9 +15,9 @@ public class MainController {
      */
     public synchronized String get(String path) {
 
-        StringBuffer httpResponse = new StringBuffer();
+        StringBuilder httpResponse = new StringBuilder();
         Date today = new Date();
-        String httpContent = "";
+        String httpContent;
         try {
             httpContent = FileService.getContent(path);
 
@@ -35,7 +36,10 @@ public class MainController {
                 httpResponse.append("HTTP/1.1 200 OK\r\n\r\n");
             } else {
                 // return file not found page
-                httpContent = "File Not Found";
+                httpContent = Template.HTML_TEMPLATE
+                .replace("{{title}}", "404 - Not Found")
+                .replace("{{body-title}}", "File Not Found")
+                .replace("{{body-content}}", "Cannot find a file requested.");
 
                 httpResponse.append("HTTP/1.1 404 Not Found\r\n");
                 httpResponse.append("Date: ").append(today).append("\r\n");
