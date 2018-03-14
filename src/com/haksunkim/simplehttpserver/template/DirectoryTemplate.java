@@ -1,6 +1,7 @@
 package com.haksunkim.simplehttpserver.template;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class DirectoryTemplate implements Template {
@@ -15,25 +16,49 @@ public class DirectoryTemplate implements Template {
         File[] files = file.listFiles();
         File parentFile = file.getParentFile();
 
-        // loop through the list of files, and compose htmlBody
         StringBuilder stringBuilder = new StringBuilder();
+
+        // if parent file exists, present Parent link
+        try {
+            if (parentFile.exists()) {
+                stringBuilder.append("<div class='row' style='padding-bottom:10px;'>");
+                stringBuilder.append("<div class='col-sm-12'><a href='");
+                stringBuilder.append(parentFile.getPath());
+                stringBuilder.append("' class='btn btn-primary'>Go to parent directory</a></div>");
+                stringBuilder.append("</div>");
+                System.out.println(parentFile.getPath());
+            }
+        } catch (NullPointerException npe) {
+            // in case when parent file returns null for path, do nothing
+        }
+
+        // loop through the list of files, and compose htmlBody
         try {
             for (File childFile : files) {
                 stringBuilder.append("<div class='row'>");
-                stringBuilder.append("<div class='col-sm-2'>");
+                stringBuilder.append("<div class='col-sm-2'><span class='badge badge-success'>");
                 stringBuilder.append(childFile.isDirectory() ? "d" : "-");
                 stringBuilder.append(childFile.canRead() ? "r" : "-");
                 stringBuilder.append(childFile.canWrite() ? "w" : "-");
                 stringBuilder.append(childFile.canExecute() ? "x" : "-");
-                stringBuilder.append("</div>");
-                stringBuilder.append("<div class='col-sm-6'><a href='");
+                stringBuilder.append("</span></div>");
+                stringBuilder.append("<div class='col-sm-4'><a href='");
                 stringBuilder.append(childFile.getPath());
-                stringBuilder.append("'>");
+                stringBuilder.append("' class='badge ");
+                stringBuilder.append(childFile.isDirectory() ? "badge-primary'>" : "badge-secondary'>");
                 stringBuilder.append(childFile.getPath());
                 stringBuilder.append("</a></div>");
                 stringBuilder.append("<div class='col-sm-4'>");
                 stringBuilder.append(new Date(childFile.lastModified()));
                 stringBuilder.append("</div>");
+                if (childFile.isFile()) {
+                    DecimalFormat formatter = new DecimalFormat("#,###");
+                    stringBuilder.append("<div class='col-sm-2'>");
+                    stringBuilder.append(String.valueOf(formatter.format(childFile.length())));
+                    stringBuilder.append(" bytes</div>");
+                } else {
+                    stringBuilder.append("<div class='col-sm-2'>&nbsp;</div>");
+                }
                 stringBuilder.append("</div>");
             }
         } catch (NullPointerException npe) {

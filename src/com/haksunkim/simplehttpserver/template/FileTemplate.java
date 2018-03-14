@@ -14,18 +14,34 @@ public class FileTemplate implements Template {
 
         //get contents of the file
         BufferedReader br = new BufferedReader(new FileReader(file));
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuilder = new StringBuilder();
+        File parentFile = file.getParentFile();
+
+        // if parent file exists, present Parent link
+        try {
+            if (parentFile.exists()) {
+                stringBuilder.append("<div class='row' style='padding-bottom:10px;'>");
+                stringBuilder.append("<div class='col-sm-12'><a href='");
+                stringBuilder.append(parentFile.getPath());
+                stringBuilder.append("' class='btn btn-primary'>Go to parent directory</a></div>");
+                stringBuilder.append("</div>");
+                System.out.println(parentFile.getPath());
+            }
+        } catch (NullPointerException npe) {
+            // in case when parent file returns null for path, do nothing
+        }
+
         String line;
         try {
             line = br.readLine();
             while (line != null) {
-                stringBuffer.append(line);
+                stringBuilder.append(line);
                 line = br.readLine();
             }
 
             br.close();
 
-            bodyContent = stringBuffer.toString();
+            bodyContent = stringBuilder.toString();
         } catch (IOException ioe) {
             bodyContent = "<h1>" + ioe.getMessage() + "</h>";
         }

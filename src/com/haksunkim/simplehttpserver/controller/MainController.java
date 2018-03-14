@@ -39,7 +39,7 @@ public class MainController {
                 httpContent = Template.HTML_TEMPLATE
                 .replace("{{title}}", "404 - Not Found")
                 .replace("{{body-title}}", "File Not Found")
-                .replace("{{body-content}}", "Cannot find a file requested.");
+                .replace("{{body-content}}", "Cannot find a file requested.</br><a href='/'>Back to main page.</a>");
 
                 httpResponse.append("HTTP/1.1 404 Not Found\r\n");
                 httpResponse.append("Date: ").append(today).append("\r\n");
