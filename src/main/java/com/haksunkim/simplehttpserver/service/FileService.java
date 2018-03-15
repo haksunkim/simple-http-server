@@ -16,6 +16,9 @@ public class FileService {
      * @return     HTML content as String
      */
     public static String getContent(String path) throws FileNotFoundException {
+        // create a file object based on current directory where application runs
+        path = new File("").getAbsolutePath() + path;
+
         File file = new File(path);
 
         if (!file.exists()) throw new FileNotFoundException("File not found.");

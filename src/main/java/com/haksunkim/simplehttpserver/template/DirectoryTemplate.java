@@ -15,18 +15,19 @@ public class DirectoryTemplate implements Template {
         // get the list of file in the directory
         File[] files = file.listFiles();
         File parentFile = file.getParentFile();
+        String cwd = new File("").getAbsolutePath();
 
         StringBuilder stringBuilder = new StringBuilder();
-
         // if parent file exists, present Parent link
         try {
-            if (parentFile.exists()) {
+            if (parentFile.exists() && !cwd.equals(file.getAbsolutePath())) {
+                String returnPath = parentFile.getPath().replaceFirst(cwd,"");
+
                 stringBuilder.append("<div class='row' style='padding-bottom:10px;'>");
                 stringBuilder.append("<div class='col-sm-12'><a href='");
-                stringBuilder.append(parentFile.getPath());
+                stringBuilder.append((returnPath.equals("")) ? "/" : returnPath);
                 stringBuilder.append("' class='btn btn-primary'>Go to parent directory</a></div>");
                 stringBuilder.append("</div>");
-                System.out.println(parentFile.getPath());
             }
         } catch (NullPointerException npe) {
             // in case when parent file returns null for path, do nothing
@@ -36,17 +37,17 @@ public class DirectoryTemplate implements Template {
         try {
             for (File childFile : files) {
                 stringBuilder.append("<div class='row'>");
-                stringBuilder.append("<div class='col-sm-2'><span class='badge badge-success'>");
+                stringBuilder.append("<div class='col-sm-1'><span class='badge badge-success'>");
                 stringBuilder.append(childFile.isDirectory() ? "d" : "-");
                 stringBuilder.append(childFile.canRead() ? "r" : "-");
                 stringBuilder.append(childFile.canWrite() ? "w" : "-");
                 stringBuilder.append(childFile.canExecute() ? "x" : "-");
                 stringBuilder.append("</span></div>");
-                stringBuilder.append("<div class='col-sm-4'><a href='");
-                stringBuilder.append(childFile.getPath());
+                stringBuilder.append("<div class='col-sm-5'><a href='");
+                stringBuilder.append(childFile.getPath().replaceFirst(cwd,""));
                 stringBuilder.append("' class='badge ");
                 stringBuilder.append(childFile.isDirectory() ? "badge-primary'>" : "badge-secondary'>");
-                stringBuilder.append(childFile.getPath());
+                stringBuilder.append(childFile.getPath().replaceFirst(cwd,""));
                 stringBuilder.append("</a></div>");
                 stringBuilder.append("<div class='col-sm-4'>");
                 stringBuilder.append(new Date(childFile.lastModified()));
